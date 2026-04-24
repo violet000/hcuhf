@@ -45,11 +45,6 @@ android {
             }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            android.libraryVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "HCUHF_${versionCodeA()}_${releaseTime()}.aar"
-                }
-            }
             buildConfigField("int", "API_VERSION", "${releaseTime()}")
         }
         debug {
@@ -79,6 +74,9 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        buildConfig true
     }
     namespace 'com.xlzn.hcpda'
     publishing {
@@ -110,9 +108,14 @@ afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
-                from components.release
                 artifactId = "ModuleAPI"
                 version = "1.1.0"
+                def releaseComponent = components.findByName("release")
+                if (releaseComponent != null) {
+                    from releaseComponent
+                } else {
+                    artifact("$buildDir/outputs/aar/ModuleAPI-release.aar")
+                }
             }
         }
     }
