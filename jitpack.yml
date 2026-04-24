@@ -1,5 +1,8 @@
 jdk:
   - openjdk17
 
+before_install:
+  - sdk install gradle 8.2.1
+
 install:
   - gradle :ModuleAPI:publishToMavenLocal
